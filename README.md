@@ -26,6 +26,7 @@ This is a modern, full-featured Todo App built with **React + Tailwind CSS** tha
 | Backend  | Node.js + Express                          |
 | LLM      | Groq API (LLaMA 3, Mixtral, etc.)          |
 | Slack    | Incoming Webhooks                          |
+| Databse  | Firebase                                   |
 
 
 ---
