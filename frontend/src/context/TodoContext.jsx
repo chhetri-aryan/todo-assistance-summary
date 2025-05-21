@@ -35,11 +35,29 @@ export const TodoProvider = ({ children }) => {
     }
   };
 
+  const updateTodo = async (id, title, description) => {
+    try {
+      await api.put(`/todos/${id}`, { title: title, description: description });
+      fetchTodos();
+    } catch (error) {
+      console.error("Failed to update todo:", error);
+    }
+  }
+
+  const toggleTodoStatus = async (id, completed) => {
+    try {
+      await api.put(`/todos/${id}`, { completed: !completed });
+      fetchTodos();
+    } catch (error) {
+      console.error("Failed to toggle todo status:", error);
+    }
+  }
+
   useEffect(() => {
     fetchTodos();
   }, []);
-
-  const summarizeTodos = async (apiKey, slackWebhook) => {
+  
+  const summarizeTodos = async (apiKey) => {
   try {
     const todoArray = Object.values(todos || {});
     const pendingTodos = todoArray.filter(todo => !todo.completed);
@@ -72,7 +90,7 @@ const sendToSlack = async (summary, slackWebhook) => {
 
   return (
     <TodoContext.Provider
-      value={{ todos, todoText, setTodoText, addTodo, deleteTodo, summarizeTodos, sendToSlack }}
+      value={{ todos, todoText, setTodoText, addTodo, deleteTodo, summarizeTodos, sendToSlack, updateTodo, toggleTodoStatus }}
     >
       {children}
     </TodoContext.Provider>

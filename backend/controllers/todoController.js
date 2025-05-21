@@ -75,7 +75,6 @@ const summarizeTodos = async (req, res) => {
 };
 
 
-
 const sendToSlack = async (req, res) => {
   const { summary, slackWebhook } = req.body;
 
