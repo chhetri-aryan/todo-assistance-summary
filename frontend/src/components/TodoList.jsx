@@ -6,19 +6,16 @@ const TodoList = () => {
   const { todos } = useTodos();
   const [activeTab, setActiveTab] = useState('all');
 
-  const todoArray = Object.entries(todos || {}).map(([id, todo]) => ({
-  id,
-  ...todo,
-}));
 
-  const filteredTodos = todoArray.filter(todo => {
+
+  const filteredTodos = todos.filter(todo => {
     if (activeTab === 'active') return !todo.completed;
     if (activeTab === 'completed') return todo.completed;
     return true;
   });
 
-  const pendingCount = todoArray.filter(todo => !todo.completed).length;
-  const completedCount = todoArray.filter(todo => todo.completed).length;
+  const pendingCount = todos.filter(todo => !todo.completed).length;
+  const completedCount = todos.filter(todo => todo.completed).length;
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
@@ -31,17 +28,17 @@ const TodoList = () => {
           className={`px-4 py-2 rounded text-sm font-medium border ${
             activeTab === 'all'
               ? 'bg-blue-600 text-white border-blue-600'
-              : 'bg-gray-100 text-gray-700'
+              : 'bg-gray-100 text-white/50'
           }`}
         >
-          All ({todoArray.length})
+          All ({todos.length})
         </button>
         <button
           onClick={() => setActiveTab('active')}
           className={`px-4 py-2 rounded text-sm font-medium border ${
             activeTab === 'active'
               ? 'bg-blue-600 text-white border-blue-600'
-              : 'bg-gray-100 text-gray-700'
+              : 'bg-gray-100 text-white/50'
           }`}
         >
           Active ({pendingCount})
@@ -51,7 +48,7 @@ const TodoList = () => {
           className={`px-4 py-2 rounded text-sm font-medium border ${
             activeTab === 'completed'
               ? 'bg-blue-600 text-white border-blue-600'
-              : 'bg-gray-100 text-gray-700'
+              : 'bg-gray-100 text-white/50'
           }`}
         >
           Completed ({completedCount})

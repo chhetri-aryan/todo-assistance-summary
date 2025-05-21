@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import api from "../api"; 
+import { toast } from "react-toastify";
 const TodoContext = createContext();
 
 export const TodoProvider = ({ children }) => {
@@ -9,7 +10,8 @@ export const TodoProvider = ({ children }) => {
   const fetchTodos = async () => {
     try {
       const res = await api.get("/todos");
-      setTodos(res.data);
+      const todosArray = Object.entries(res.data).map(([id, todo]) => ({ id, ...todo }));
+    setTodos(todosArray.reverse());
     } catch (error) {
       console.error("Failed to fetch todos:", error);
     }
@@ -21,7 +23,9 @@ export const TodoProvider = ({ children }) => {
       await api.post("/todos", { date: new Date(), title: title, description: description, completed: false });
       setTodoText("");
       fetchTodos();
+      toast.success("Todo added successfully!");
     } catch (error) {
+      toast.error("Failed to add todo");
       console.error("Failed to add todo:", error);
     }
   };
@@ -30,7 +34,9 @@ export const TodoProvider = ({ children }) => {
     try {
       await api.delete(`/todos/${id}`);
       fetchTodos();
+      toast.success("Todo deleted successfully!");
     } catch (error) {
+      toast.error("Failed to delete todo");
       console.error("Failed to delete todo:", error);
     }
   };
@@ -39,7 +45,9 @@ export const TodoProvider = ({ children }) => {
     try {
       await api.put(`/todos/${id}`, { title: title, description: description });
       fetchTodos();
+      toast.success("Todo updated successfully!");
     } catch (error) {
+      toast.error("Failed to update todo");
       console.error("Failed to update todo:", error);
     }
   }
@@ -48,7 +56,9 @@ export const TodoProvider = ({ children }) => {
     try {
       await api.put(`/todos/${id}`, { completed: !completed });
       fetchTodos();
+      toast.success("Todo status updated successfully!");
     } catch (error) {
+      toast.error("Failed to update todo status");
       console.error("Failed to toggle todo status:", error);
     }
   }
@@ -66,8 +76,10 @@ export const TodoProvider = ({ children }) => {
       apiKey,
     });
 
+    toast.success("Summary generated successfully!");
     return res.data.summary;
   } catch (error) {
+    toast.error("Failed to generate summary");
     console.error('Summarize error:', error);
     return null;
   }
@@ -80,9 +92,11 @@ const sendToSlack = async (summary, slackWebhook) => {
       slackWebhook,
     });
 
+    toast.success("Summary sent to Slack successfully!");
     return res.data.success;
   } catch (error) {
     console.error('Slack send error:', error);
+    toast.error("Failed to send summary to Slack");
     return false;
   }
 };

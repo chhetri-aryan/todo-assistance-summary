@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTodos } from '../context/TodoContext'; // Adjust the path if needed
+import { useTodos } from '../context/TodoContext';
 
 const SummaryPanel = () => {
   const { todos, summarizeTodos, sendToSlack, isLoading } = useTodos();
@@ -9,8 +9,7 @@ const SummaryPanel = () => {
   const [sentToSlack, setSentToSlack] = useState(false);
   const [showCredentials, setShowCredentials] = useState(false);
 
-const todoArray = Object.values(todos || {});
-const pendingTodos = todoArray.filter(todo => !todo.completed); 
+const pendingTodos = todos.filter(todo => !todo.completed); 
   const hasPendingTodos = pendingTodos.length > 0;
 
   const handleGenerateSummary = async () => {

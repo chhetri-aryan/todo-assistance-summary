@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { useTodos } from '../context/TodoContext'; // Adjust the path if needed
+import { useTodos } from '../context/TodoContext';
+import { Pencil, Trash2 } from 'lucide-react';
 
 
 const TodoItem = ({ todo }) => {
@@ -40,7 +41,7 @@ const TodoItem = ({ todo }) => {
             </p>
           )}
           <p className="mt-2 text-xs text-gray-500">
-            {/* Created {formatDistanceToNow(new Date(todo.createdAt), { addSuffix: true })} */}
+            Created {formatDistanceToNow(new Date(todo.date), { addSuffix: true })}
           </p>
         </div>
       </div>
@@ -48,15 +49,15 @@ const TodoItem = ({ todo }) => {
       <div className="flex justify-end gap-2 mt-4">
         <button
           onClick={() => setIsEditDialogOpen(true)}
-          className="flex items-center text-sm text-blue-600 hover:underline"
+          className="flex items-center text-sm text-white"
         >
-          ✏️ Edit
+          <Pencil className="mr-1 text-blue-600" /> Edit
         </button>
         <button
           onClick={() => setIsDeleteDialogOpen(true)}
-          className="flex items-center text-sm text-red-600 hover:underline"
+          className="flex items-center text-sm  text-white"
         >
-          🗑️ Delete
+          <Trash2 className="mr-1 text-red-600" /> Delete
         </button>
       </div>
 
@@ -90,7 +91,7 @@ const TodoItem = ({ todo }) => {
             <div className="flex justify-end gap-2 mt-6">
               <button
                 onClick={() => setIsEditDialogOpen(false)}
-                className="px-4 py-2 border rounded text-sm"
+                className="px-4 py-2 border rounded text-sm text-white"
               >
                 Cancel
               </button>
@@ -114,13 +115,13 @@ const TodoItem = ({ todo }) => {
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setIsDeleteDialogOpen(false)}
-                className="px-4 py-2 border rounded text-sm"
+                className="px-4 py-2 border rounded text-sm text-white"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded text-sm"
+                className="px-4 py-2 bg-red-600 text-red-600 rounded text-sm"
               >
                 Delete
               </button>
