@@ -2,11 +2,13 @@ const db = require('../utils/firebaseAdmin');
 const axios = require('axios');
 const Groq = require('groq-sdk');
 
-const getTodos = (req, res) => {
-  db.ref('todos').once('value', snapshot => {
-    const data = snapshot.val() || {};
-    res.json(data);
-  });
+const getTodos = async (req, res) => {
+  try {
+    const snapshot = await db.ref('todos').once('value');
+    res.json(snapshot.val() || {});
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 const addTodo = (req, res) => {
@@ -36,13 +38,15 @@ const deleteTodo = (req, res) => {
 
 
 const summarizeTodos = async (req, res) => {
-  const { todos, apiKey } = req.body;
+  const { todos } = req.body;
+  const apiKey = process.env.GROQ_API_KEY;
 
-  console.log('Received todos:', todos);
-  console.log('Received API key:', apiKey);
+  if (!todos || !todos.length) {
+    return res.status(400).json({ error: 'Missing todos' });
+  }
 
-  if (!todos || !apiKey) {
-    return res.status(400).json({ error: 'Missing todos or API key' });
+  if (!apiKey) {
+    return res.status(500).json({ error: 'Groq API key not configured on server' });
   }
 
   try {
@@ -51,7 +55,7 @@ const summarizeTodos = async (req, res) => {
     const content = todos.map((t, i) => `${i + 1}. title: ${t.title} . description: ${t.description}`).join('\n');
 
     const completion = await groq.chat.completions.create({
-      model: 'llama3-70b-8192', 
+      model: 'llama3-70b-8192',
       messages: [
         {
           role: 'system',
@@ -66,7 +70,6 @@ const summarizeTodos = async (req, res) => {
     });
 
     const summary = completion.choices[0]?.message?.content;
-    console.log('Summary:', summary);
     res.json({ summary });
   } catch (err) {
     console.error('Groq API Error:', err.response?.data || err.message);
@@ -76,10 +79,15 @@ const summarizeTodos = async (req, res) => {
 
 
 const sendToSlack = async (req, res) => {
-  const { summary, slackWebhook } = req.body;
+  const { summary } = req.body;
+  const slackWebhook = process.env.SLACK_WEBHOOK_URL;
 
-  if (!summary || !slackWebhook) {
-    return res.status(400).json({ error: 'Missing summary or Slack webhook' });
+  if (!summary) {
+    return res.status(400).json({ error: 'Missing summary' });
+  }
+
+  if (!slackWebhook) {
+    return res.status(500).json({ error: 'Slack webhook not configured on server' });
   }
 
   try {
