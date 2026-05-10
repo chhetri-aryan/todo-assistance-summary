@@ -21,7 +21,8 @@ export const TodoProvider = ({ children }) => {
     if (!title.trim()) return;
     try {
       const res = await api.post("/todos", { date: new Date(), title, description, completed: false });
-      setTodos(prev => [res.data, ...prev]);
+      const newTodo = res.data?.id ? res.data : { id: res.data.id, date: new Date(), title, description, completed: false };
+      setTodos(prev => [newTodo, ...prev]);
       toast.success("Todo added successfully!");
     } catch (error) {
       toast.error("Failed to add todo");

@@ -13,9 +13,11 @@ const TodoItem = ({ todo }) => {
   const { updateTodo, deleteTodo, toggleTodoStatus } = useTodos();
 
   useEffect(() => {
-    setEditedTitle(todo.title);
-    setEditedDescription(todo.description);
-  }, [todo.title, todo.description]);
+    if (!isEditDialogOpen) {
+      setEditedTitle(todo.title);
+      setEditedDescription(todo.description);
+    }
+  }, [todo.title, todo.description, isEditDialogOpen]);
 
   const handleSave = () => {
     if (editedTitle.trim()) {

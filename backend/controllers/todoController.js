@@ -7,7 +7,8 @@ const getTodos = async (req, res) => {
     const snapshot = await db.ref('todos').once('value');
     res.json(snapshot.val() || {});
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Failed to fetch todos:', err);
+    res.status(500).json({ error: 'Failed to fetch todos' });
   }
 };
 
