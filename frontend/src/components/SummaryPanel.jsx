@@ -3,17 +3,14 @@ import { useTodos } from '../context/TodoContext';
 
 const SummaryPanel = () => {
   const { todos, summarizeTodos, sendToSlack, isLoading } = useTodos();
-  const [apiKey, setApiKey] = useState('');
-  const [slackWebhook, setSlackWebhook] = useState('');
   const [summary, setSummary] = useState(null);
   const [sentToSlack, setSentToSlack] = useState(false);
-  const [showCredentials, setShowCredentials] = useState(false);
 
-const pendingTodos = todos.filter(todo => !todo.completed); 
+  const pendingTodos = todos.filter(todo => !todo.completed);
   const hasPendingTodos = pendingTodos.length > 0;
 
   const handleGenerateSummary = async () => {
-    const result = await summarizeTodos(apiKey, slackWebhook);
+    const result = await summarizeTodos();
     if (result) {
       setSummary(result);
       setSentToSlack(false);
@@ -22,7 +19,7 @@ const pendingTodos = todos.filter(todo => !todo.completed);
 
   const handleSendToSlack = async () => {
     if (summary) {
-      const success = await sendToSlack(summary, slackWebhook);
+      const success = await sendToSlack(summary);
       setSentToSlack(success);
     }
   };
@@ -43,50 +40,12 @@ const pendingTodos = todos.filter(todo => !todo.completed);
         </div>
       )}
 
-      <div className="mb-4">
-        <button
-          onClick={() => setShowCredentials(!showCredentials)}
-          className="text-blue-600 hover:underline text-sm font-medium"
-        >
-          {showCredentials ? 'Hide API Credentials' : 'Show API Credentials'}
-        </button>
-
-        {showCredentials && (
-          <div className="mt-4 space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                OpenAI API Key
-              </label>
-              <input
-                type="password"
-                placeholder="Enter your OpenAI API key"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Slack Webhook URL
-              </label>
-              <input
-                type="password"
-                placeholder="Enter your Slack webhook URL"
-                value={slackWebhook}
-                onChange={(e) => setSlackWebhook(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-              />
-            </div>
-          </div>
-        )}
-      </div>
-
       <div className="flex flex-col gap-4">
         <button
           onClick={handleGenerateSummary}
-          disabled={isLoading || !hasPendingTodos || !apiKey}
+          disabled={isLoading || !hasPendingTodos}
           className={`w-full px-4 py-2 rounded-md text-white font-medium transition ${
-            isLoading || !hasPendingTodos || !apiKey
+            isLoading || !hasPendingTodos
               ? 'bg-blue-300 cursor-not-allowed'
               : 'bg-blue-600 hover:bg-blue-700'
           }`}
@@ -103,9 +62,9 @@ const pendingTodos = todos.filter(todo => !todo.completed);
 
             <button
               onClick={handleSendToSlack}
-              disabled={isLoading || !slackWebhook}
+              disabled={isLoading}
               className={`w-full px-4 py-2 rounded-md font-medium transition border ${
-                isLoading || !slackWebhook
+                isLoading
                   ? 'text-gray-400 border-gray-300 cursor-not-allowed'
                   : 'text-blue-700 border-blue-600 hover:bg-blue-50'
               }`}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTodos } from '../context/TodoContext';
 import TodoItem from './TodoItem';
 
@@ -6,16 +6,14 @@ const TodoList = () => {
   const { todos } = useTodos();
   const [activeTab, setActiveTab] = useState('all');
 
-
-
-  const filteredTodos = todos.filter(todo => {
+  const filteredTodos = useMemo(() => todos.filter(todo => {
     if (activeTab === 'active') return !todo.completed;
     if (activeTab === 'completed') return todo.completed;
     return true;
-  });
+  }), [todos, activeTab]);
 
-  const pendingCount = todos.filter(todo => !todo.completed).length;
-  const completedCount = todos.filter(todo => todo.completed).length;
+  const pendingCount = useMemo(() => todos.filter(todo => !todo.completed).length, [todos]);
+  const completedCount = useMemo(() => todos.filter(todo => todo.completed).length, [todos]);
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">

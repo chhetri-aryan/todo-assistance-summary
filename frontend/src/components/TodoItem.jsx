@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { useTodos } from '../context/TodoContext';
 import { Pencil, Trash2 } from 'lucide-react';
@@ -11,6 +11,13 @@ const TodoItem = ({ todo }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const { updateTodo, deleteTodo, toggleTodoStatus } = useTodos();
+
+  useEffect(() => {
+    if (!isEditDialogOpen) {
+      setEditedTitle(todo.title);
+      setEditedDescription(todo.description);
+    }
+  }, [todo.title, todo.description, isEditDialogOpen]);
 
   const handleSave = () => {
     if (editedTitle.trim()) {
